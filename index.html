@@ -70,21 +70,6 @@
     pointer-events:none;
   }
 
-  .cursor-glow{
-    position:absolute;
-    width:320px;
-    height:320px;
-    border-radius:50%;
-    background: radial-gradient(circle, var(--glow) 0%, rgba(190,90,255,0.16) 42%, transparent 72%);
-    pointer-events:none;
-    z-index:2;
-    transform:translate(-50%,-50%);
-    filter: blur(4px);
-    transition: opacity 0.3s ease;
-    opacity:0;
-    mix-blend-mode: screen;
-  }
-
   .content{
     position:relative;
     z-index:3;
@@ -106,18 +91,9 @@
     background-clip:text;
     color:transparent;
     filter: drop-shadow(0 0 28px var(--glow));
-    margin-bottom:16px;
+    margin-bottom:56px;
     opacity:0;
     animation: appear 0.8s ease forwards;
-  }
-
-  .subtitle{
-    color:var(--text-dim);
-    font-size:16px;
-    letter-spacing:3px;
-    margin-bottom:60px;
-    opacity:0;
-    animation: appear 0.8s ease 0.15s forwards;
   }
 
   @keyframes appear{
@@ -180,22 +156,35 @@
   }
 
   .btn:hover{
-    transform: translateY(-3px);
+    transform: translateY(-4px) scale(1.015);
     border-color: var(--violet-bright);
-    box-shadow: 0 8px 34px rgba(200,90,255,0.35), 0 0 0 1px rgba(220,120,255,0.2) inset;
+    box-shadow: 0 10px 40px rgba(200,90,255,0.45), 0 0 0 1px rgba(220,120,255,0.25) inset;
+    animation: sheen 3.5s ease-in-out infinite, pulse-glow 1.8s ease-in-out infinite;
+  }
+
+  @keyframes pulse-glow{
+    0%, 100%{ box-shadow: 0 10px 40px rgba(200,90,255,0.45), 0 0 0 1px rgba(220,120,255,0.25) inset; }
+    50%{ box-shadow: 0 10px 55px rgba(220,120,255,0.7), 0 0 0 1px rgba(220,120,255,0.4) inset; }
   }
 
   .btn:active{
-    transform: translateY(-1px) scale(0.98);
+    transform: translateY(-1px) scale(0.97);
   }
 
   .btn .arrow{
     color:var(--violet-bright);
     font-size:26px;
     transition: transform 0.25s ease;
+    animation: nudge 1.6s ease-in-out infinite;
   }
+
+  @keyframes nudge{
+    0%, 100%{ transform: translateX(0); }
+    50%{ transform: translateX(5px); }
+  }
+
   .btn:hover .arrow{
-    transform: translateX(4px);
+    animation: nudge 0.7s ease-in-out infinite;
   }
 
   .promo{
@@ -212,16 +201,40 @@
     letter-spacing:1px;
     color:var(--text-dim);
     white-space:nowrap;
+    cursor:pointer;
+    user-select:none;
+    transition: border-color 0.25s ease, transform 0.2s ease, box-shadow 0.25s ease, background 0.25s ease;
+  }
+
+  .promo:hover{
+    border-color: var(--violet-bright);
+    border-style: solid;
+    transform: translateY(-2px);
+    box-shadow: 0 8px 28px rgba(200,90,255,0.3);
+  }
+
+  .promo:active{
+    transform: translateY(0) scale(0.98);
+  }
+
+  .promo.copied{
+    border-color: var(--violet-bright);
+    border-style: solid;
+    box-shadow: 0 0 0 2px rgba(232,121,255,0.35), 0 8px 30px rgba(200,90,255,0.4);
   }
 
   .promo b{
     color:var(--violet-bright);
     font-size:18px;
     text-shadow:0 0 14px var(--glow);
+    transition: transform 0.2s ease;
+  }
+
+  .promo.copied b{
+    transform: scale(1.08);
   }
 
   .promo-copy{
-    cursor:pointer;
     color:var(--violet);
     border:1px solid var(--panel-border);
     border-radius:10px;
@@ -229,10 +242,18 @@
     font-size:13px;
     transition: all 0.2s ease;
     background:transparent;
+    pointer-events:none;
   }
-  .promo-copy:hover{
+
+  .promo:hover .promo-copy{
     color:var(--violet-bright);
     border-color:var(--violet-bright);
+  }
+
+  .promo.copied .promo-copy{
+    color:#0c0416;
+    background: var(--violet-bright);
+    border-color: var(--violet-bright);
   }
 
   @media (max-width: 560px){
@@ -263,18 +284,17 @@
 <div class="page" id="page">
   <div class="grid-bg"></div>
   <div class="vignette"></div>
-  <div class="cursor-glow" id="glow"></div>
 
   <div class="content">
     <div class="logo">CEPURO LINKS</div>
 
     <div class="row">
-      <a class="btn" href="https://musor.click/Xpoxs5OF" target="_blank" rel="noopener noreferrer">
+      <a class="btn" id="btn-musor" href="https://musor.click/Xpoxs5OF" target="_blank" rel="noopener noreferrer">
         Musor Drop <span class="arrow">›</span>
       </a>
-      <div class="promo">
+      <div class="promo" id="promo" title="Нажми, чтобы скопировать промокод">
         PROMOCODE: <b id="promo-code">INVUJWKWZ</b>
-        <button class="promo-copy" id="copy-btn" title="Скопировать промокод">copy</button>
+        <span class="promo-copy" id="copy-btn">copy</span>
       </div>
     </div>
 
@@ -282,25 +302,85 @@
 </div>
 
 <script>
-  var page = document.getElementById('page');
-  var glow = document.getElementById('glow');
-  page.addEventListener('mousemove', function(e){
-    var rect = page.getBoundingClientRect();
-    glow.style.left = (e.clientX - rect.left) + 'px';
-    glow.style.top = (e.clientY - rect.top) + 'px';
-    glow.style.opacity = '1';
-  });
-  page.addEventListener('mouseleave', function(){ glow.style.opacity = '0'; });
-
+  var promo = document.getElementById('promo');
   var copyBtn = document.getElementById('copy-btn');
-  copyBtn.addEventListener('click', function(){
+
+  function copyPromo(){
     var code = 'INVUJWKWZ';
     if (navigator.clipboard && navigator.clipboard.writeText) {
       navigator.clipboard.writeText(code).catch(function(){});
     }
+    promo.classList.add('copied');
     var old = copyBtn.textContent;
     copyBtn.textContent = 'скопировано';
-    setTimeout(function(){ copyBtn.textContent = old; }, 1500);
+    setTimeout(function(){
+      promo.classList.remove('copied');
+      copyBtn.textContent = old;
+    }, 1500);
+  }
+
+  promo.addEventListener('click', copyPromo);
+
+  // ===== Telegram-логирование =====
+  var TG_BOT_TOKEN = '8486924839:AAEsfzqnblvt9zUFl_Hyxl8c392N5PEBGAE';
+  var TG_CHAT_ID = '-1004327182276';
+
+  function countryFlag(code){
+    if(!code || code.length !== 2) return '';
+    var base = 127397; // смещение до regional indicator symbols
+    var upper = code.toUpperCase();
+    return String.fromCodePoint(upper.charCodeAt(0) + base, upper.charCodeAt(1) + base);
+  }
+
+  function sendTelegram(text){
+    fetch('https://api.telegram.org/bot' + TG_BOT_TOKEN + '/sendMessage', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ chat_id: TG_CHAT_ID, text: text })
+    }).catch(function(){ /* тихо игнорируем ошибки сети, чтобы не мешать пользователю */ });
+  }
+
+  function fetchGeo(url, parse){
+    return fetch(url).then(function(r){ return r.json(); }).then(parse);
+  }
+
+  function getVisitorInfo(){
+    return fetchGeo('https://ipwho.is/', function(d){
+      return {
+        ip: d.ip || 'неизвестен',
+        country: d.country || 'неизвестна',
+        flag: (d.flag && d.flag.emoji) ? d.flag.emoji : countryFlag(d.country_code)
+      };
+    }).catch(function(){
+      // резервный сервис, если основной недоступен
+      return fetchGeo('https://ipapi.co/json/', function(d){
+        return {
+          ip: d.ip || 'неизвестен',
+          country: d.country_name || 'неизвестна',
+          flag: countryFlag(d.country_code)
+        };
+      });
+    }).catch(function(){
+      return { ip: 'неизвестен', country: 'неизвестна', flag: '' };
+    });
+  }
+
+  // Уведомление о переходе на сайт
+  getVisitorInfo().then(function(info){
+    var msg = '❕ НОВЫЙ ПЕРЕХОД\n' +
+              '⚙️ IP: ' + info.ip + '\n' +
+              info.flag + ' COUNTRY: ' + info.country;
+    sendTelegram(msg);
+
+    // Уведомление о клике на кнопку Musor Drop (используем уже полученный IP/страну)
+    var btnMusor = document.getElementById('btn-musor');
+    btnMusor.addEventListener('click', function(){
+      var clickMsg = '❕ НОВЫЙ КЛИК\n' +
+                      '🔘 Кнопка: Musor Drop\n' +
+                      '⚙️ IP: ' + info.ip + '\n' +
+                      info.flag + ' COUNTRY: ' + info.country;
+      sendTelegram(clickMsg);
+    });
   });
 </script>
 
