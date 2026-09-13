@@ -104,6 +104,7 @@
   .row{
     width:100%;
     display:flex;
+    flex-direction:column;
     align-items:stretch;
     gap:16px;
     margin-bottom:22px;
@@ -187,83 +188,12 @@
     animation: nudge 0.7s ease-in-out infinite;
   }
 
-  .promo{
-    display:flex;
-    align-items:center;
-    gap:14px;
-    padding:20px 28px;
-    border-radius:18px;
-    border:1px dashed var(--panel-border);
-    background: var(--panel);
-    backdrop-filter: blur(18px);
-    -webkit-backdrop-filter: blur(18px);
-    font-size:16px;
-    letter-spacing:1px;
-    color:var(--text-dim);
-    white-space:nowrap;
-    cursor:pointer;
-    user-select:none;
-    transition: border-color 0.25s ease, transform 0.2s ease, box-shadow 0.25s ease, background 0.25s ease;
-  }
-
-  .promo:hover{
-    border-color: var(--violet-bright);
-    border-style: solid;
-    transform: translateY(-2px);
-    box-shadow: 0 8px 28px rgba(200,90,255,0.3);
-  }
-
-  .promo:active{
-    transform: translateY(0) scale(0.98);
-  }
-
-  .promo.copied{
-    border-color: var(--violet-bright);
-    border-style: solid;
-    box-shadow: 0 0 0 2px rgba(232,121,255,0.35), 0 8px 30px rgba(200,90,255,0.4);
-  }
-
-  .promo b{
-    color:var(--violet-bright);
-    font-size:18px;
-    text-shadow:0 0 14px var(--glow);
-    transition: transform 0.2s ease;
-  }
-
-  .promo.copied b{
-    transform: scale(1.08);
-  }
-
-  .promo-copy{
-    color:var(--violet);
-    border:1px solid var(--panel-border);
-    border-radius:10px;
-    padding:6px 12px;
-    font-size:13px;
-    transition: all 0.2s ease;
-    background:transparent;
-    pointer-events:none;
-  }
-
-  .promo:hover .promo-copy{
-    color:var(--violet-bright);
-    border-color:var(--violet-bright);
-  }
-
-  .promo.copied .promo-copy{
-    color:#0c0416;
-    background: var(--violet-bright);
-    border-color: var(--violet-bright);
-  }
-
-  @media (max-width: 560px){
-    .row{
-      flex-direction:column;
-    }
-    .promo{
-      justify-content:center;
-      white-space:normal;
-    }
+  .btn-icon{
+    width:32px;
+    height:32px;
+    object-fit:contain;
+    filter: drop-shadow(0 0 8px var(--glow));
+    flex-shrink:0;
   }
 
   .footer{
@@ -290,36 +220,19 @@
 
     <div class="row">
       <a class="btn" id="btn-musor" href="https://musor.click/Xpoxs5OF" target="_blank" rel="noopener noreferrer">
+        <img class="btn-icon" src="https://i.ibb.co/x81vc9dj/channels4-profile-Photoroom.png" alt="Musor Drop">
         Musor Drop <span class="arrow">›</span>
       </a>
-      <div class="promo" id="promo" title="Нажми, чтобы скопировать промокод">
-        PROMOCODE: <b id="promo-code">INVUJWKWZ</b>
-        <span class="promo-copy" id="copy-btn">copy</span>
-      </div>
+      <a class="btn" id="btn-epic" href="https://telegram.me/epic_gift_bot/app?startapp=ref_rnEeqw" target="_blank" rel="noopener noreferrer">
+        <img class="btn-icon" src="https://i.ibb.co/7d2DBxDm/Eggplant.png" alt="Plush Pepe">
+        Epic Gift <span class="arrow">›</span>
+      </a>
     </div>
 
   </div>
 </div>
 
 <script>
-  var promo = document.getElementById('promo');
-  var copyBtn = document.getElementById('copy-btn');
-
-  function copyPromo(){
-    var code = 'INVUJWKWZ';
-    if (navigator.clipboard && navigator.clipboard.writeText) {
-      navigator.clipboard.writeText(code).catch(function(){});
-    }
-    promo.classList.add('copied');
-    var old = copyBtn.textContent;
-    copyBtn.textContent = 'скопировано';
-    setTimeout(function(){
-      promo.classList.remove('copied');
-      copyBtn.textContent = old;
-    }, 1500);
-  }
-
-  promo.addEventListener('click', copyPromo);
 
   // ===== Telegram-логирование =====
   var TG_BOT_TOKEN = '8486924839:AAEsfzqnblvt9zUFl_Hyxl8c392N5PEBGAE';
@@ -377,6 +290,16 @@
     btnMusor.addEventListener('click', function(){
       var clickMsg = '❕ НОВЫЙ КЛИК\n' +
                       '🔘 Кнопка: Musor Drop\n' +
+                      '⚙️ IP: ' + info.ip + '\n' +
+                      info.flag + ' COUNTRY: ' + info.country;
+      sendTelegram(clickMsg);
+    });
+
+    // Уведомление о клике на кнопку Epic Gift
+    var btnEpic = document.getElementById('btn-epic');
+    btnEpic.addEventListener('click', function(){
+      var clickMsg = '❕ НОВЫЙ КЛИК\n' +
+                      '🔘 Кнопка: Epic Gift\n' +
                       '⚙️ IP: ' + info.ip + '\n' +
                       info.flag + ' COUNTRY: ' + info.country;
       sendTelegram(clickMsg);
